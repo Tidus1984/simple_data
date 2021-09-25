@@ -1,4 +1,5 @@
 #!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
 """
 检测: pip 有无安装
 检测: 需要三方库 有无安装
@@ -7,6 +8,7 @@
 """
 import os,re
 
+CONFIG_FILE='../config.ini'
 APP = 'pip'  # Linux需要有pip安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
 # 第三方库
@@ -51,11 +53,23 @@ def check_Installed(LIBS):
         	pass
         	# print(f"{lib}第三方库已经安装")
 
+def check_config():
+    # TODO 检测config.ini config不在新建
+    # https://github.com/Tidus1984/AV_Data_Capture/blob/master/ADC_function.py
+    #
+    # 学习 configparser 模块
+    # https://docs.python.org/zh-cn/3/library/configparser.html
+    # 存储到db数据库内
+    pass
+
 def main():
 	# 1. pip 有无安装
 	check_app()
 	# 2. 第三方库检测没有安装
 	check_Installed(LIBS)
-	# 3. TODO configparser 初始化参数
+	# 3. config.ini 初始化参数
+	# 4. 检测config.ini 填写是否正确，排除#注释
+
+
 if __name__ == "__main__":
 	main()
