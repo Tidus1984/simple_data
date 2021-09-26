@@ -6,7 +6,7 @@
 初始化参数
 
 """
-import os,re
+import os,re,configparser
 
 CONFIG_FILE='../config.ini'
 APP = 'pip'  # Linux需要有pip安装
@@ -16,7 +16,8 @@ LIBS = ['pandas',\
 		'zmail',\
 		"akshare",\
 		"baostock",\
-		"configparser"\
+		"configparser",\
+		"requests",\
 		]
 
 def check_app():
@@ -54,23 +55,53 @@ def check_Installed(LIBS):
         	# print(f"{lib}第三方库已经安装")
 
 def check_config():
-    # TODO 检测config.ini config不在新建
-    # https://github.com/Tidus1984/AV_Data_Capture/blob/master/ADC_function.py
-    #
-    # 学习 configparser 模块
-    # https://docs.python.org/zh-cn/3/library/configparser.html
-    # 存储到db数据库内
-    pass
+    # 检测config.ini
+    if not os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE,"w") as code:
+            print("[common]",file=code)
+            print("# 管理员邮箱",file=code)
+            print("admin_mail_address =",file=code)
+            print("# 域名",file=code)
+            print("url = ",file=code)
+            print("# 自动发邮件邮箱地址",file=code)
+            print("mail_address =",file=code)
+            print("# 邮箱pop3密码",file=code)
+            print("mail_passwd =",file=code)
+            print("新建 config.ini 请填写参数")
+    # 检测config.ini 参数有无填写
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+    # print(config["common"]['admin_mail_address'],config["common"]['url'],config["common"]['mail_address'],config["common"]['mail_passwd'])
+    assert config["common"]['admin_mail_address'] !='',"config.ini admin_mail_address 未填写"
+    assert config["common"]['url'] !='',"config.ini url 未填写"
+    assert config["common"]['mail_address'] !='',"config.ini mail_address 未填写"
+    assert config["common"]['mail_passwd'] !='',"mail_passwd 未填写"
+
+def check_web():
+    import requests
+    dic = {"国内网络":\
+                ["https://www.baidu.com","https://www.sogou.com"],\
+            "国外网路:":\
+                ["https://www.google.com"]
+    }
+    for web in dic.keys():
+        for url in dic[web]:
+            r = requests.get(url)
+            if r.status_code !=200:
+                print("{0}:连接发生问题请检测网路".format(web))
+            # print(f"检查{web} ： {url}")
+
 
 def main():
 	# 1. pip 有无安装
 	check_app()
 	# 2. 第三方库检测没有安装
 	check_Installed(LIBS)
-	# 3. config.ini 初始化参数
-	# 4. 检测config.ini 填写是否正确，排除#注释
-	# 5. 检测网络 
-	
+	# 3. config.ini 初始化检测参数有无正确填写
+	check_config()
+	# 4. 检测网络
+	check_web()
+
 
 if __name__ == "__main__":
 	main()
