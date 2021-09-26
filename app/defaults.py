@@ -69,7 +69,8 @@ def main():
 	check_Installed(LIBS)
 	# 3. config.ini 初始化参数
 	# 4. 检测config.ini 填写是否正确，排除#注释
-
+	# 5. 检测网络 
+	
 
 if __name__ == "__main__":
 	main()
