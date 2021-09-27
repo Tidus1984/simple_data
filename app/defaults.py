@@ -12,19 +12,18 @@ CONFIG_FILE='../config.ini'
 APP = 'pip'  # Linux需要有pip安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
 # 第三方库
-LIBS = ['pandas',\
-		'zmail',\
-		"akshare",\
-		"baostock",\
-		"configparser",\
-		"requests",\
-		]
+LIBS = [
+	'pandas',\
+	'zmail',\
+	'akshare',\
+	'baostock',\
+	'configparser',\
+	'requests',\
+	]
 
 def check_app():
 	res = os.popen("{0} -V".format(APP)).read()
-	if res != '':  # 成功安装
-		pass
-	else:
+	if res == '':  # 没有成功安装抛出异常
 		raise Exception("{0} 没有安装\n请先安装 {0}".format(APP))
 
 def _sep(s):
