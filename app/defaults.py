@@ -8,7 +8,7 @@
 """
 import os,re,configparser
 
-CONFIG_FILE='../config.ini'
+CONFIG_FILE = os.path.join(os.path.abspath(".."),"config.ini")
 APP = 'pip'  # Linux需要有pip安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
 # 第三方库
