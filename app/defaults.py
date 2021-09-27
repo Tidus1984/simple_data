@@ -81,14 +81,14 @@ def check_web():
     import requests
     dic = {"国内网络":\
                 ["https://www.baidu.com","https://www.sogou.com"],\
-            "国外网路:":\
+            "国外网路":\
                 ["https://www.google.com"]
-    }
+    	  }
     for web in dic.keys():
         for url in dic[web]:
             r = requests.get(url)
             if r.status_code !=200:
-                print("{0}:连接发生问题请检测网路".format(web))
+                print("{0}: {1}连接发生问题请检测网路".format(web,url))
             # print(f"检查{web} ： {url}")
 
 
