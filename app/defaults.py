@@ -9,7 +9,7 @@
 import os,re,configparser
 
 CONFIG_FILE = os.path.join(os.path.abspath(".."),"config.ini")
-APP = 'pip'  # Linux需要有pip安装
+APP = 'pip3'  # Linux需要有pip3安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
 # 第三方库
 LIBS = [
@@ -92,7 +92,8 @@ def check_web():
 
 
 def main():
-	# 1. pip 有无安装
+    # 只能ubuntu20.04系统
+	# 1. pip3 有无安装
 	check_app()
 	# 2. 第三方库检测没有安装
 	check_Installed(LIBS)
