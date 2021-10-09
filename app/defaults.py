@@ -1,12 +1,12 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
-检测: pip 有无安装
+检测: pip3 有无安装
 检测: 需要三方库 有无安装
 初始化参数
 
 """
-import os,re,configparser
+import os,re,configparser,sqlite3
 
 CONFIG_FILE = os.path.join(os.path.abspath(".."),"config.ini")
 APP = 'pip3'  # Linux需要有pip3安装
@@ -19,6 +19,7 @@ LIBS = [
 	'baostock',\
 	'configparser',\
 	'requests',\
+	'zmail'
 	]
 
 def check_app():
@@ -66,6 +67,11 @@ def check_config():
             print("mail_address =",file=code)
             print("# 邮箱pop3密码",file=code)
             print("mail_passwd =",file=code)
+            pwd = os.getcwd()  # 当前目录
+            father_path=os.path.abspath(os.path.dirname(pwd)+os.path.sep+".")  # 父目录
+            db_path = os.path.join(father_path,"db")
+            print("# 数据库路径",file=code)
+            print(f"DB_PATH = {db_path}",file=code)
             print("新建 config.ini 请填写参数")
     # 检测config.ini 参数有无填写
     config = configparser.ConfigParser()
@@ -90,6 +96,48 @@ def check_web():
                 print("{0}: {1}连接发生问题请检测网路".format(web,url))
             # print(f"检查{web} ： {url}")
 
+def creat_sqlite3_db(db_name = "stock.db"):
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+    db_file = os.path.join(config["common"]['DB_PATH'],db_name)
+    # print(os.path.abspath(db_file))
+    if not os.path.exists(db_file):
+        conn = sqlite3.connect(db_file)
+        # 初始化MAIL_CLIENT客户邮箱 自动插入id
+        sql = """
+        CREATE TABLE IF NOT EXISTS MAIL_CLIENT
+        (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+        邮箱 text,
+        时间 text,
+        策略 text,
+        备注 text)
+        """
+        conn.execute(sql)
+        # 初始化MAIL_MSG记录邮件基本信息 设置外键
+        # id INTEGER PRIMARY KEY AUTOINCREMENT
+        sql = """
+        CREATE TABLE IF NOT EXISTS MAIL_MSG
+        (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+        模块 text,
+        日期 text,
+        时间 text,
+        邮箱 text,
+        内容 text)
+        """
+        conn.execute(sql)
+
+        # 初始化MAIL_AD记录管理员邮箱
+        sql = """
+        CREATE TABLE IF NOT EXISTS MAIL_AD
+        (邮箱 text,
+        时间 text,
+        备注)
+        """
+        conn.execute(sql)
+        conn.close()
+    else:
+        pass
+        # print(f"无需创建初始化数据库{db_name}路径{db_file}")
 
 def main():
     # 只能ubuntu20.04系统
@@ -101,7 +149,8 @@ def main():
 	check_config()
 	# 4. 检测网络
 	check_web()
-
+	# 5. 初始化数据库和表格
+	creat_sqlite3_db()
 
 if __name__ == "__main__":
-	main()
+    main()
