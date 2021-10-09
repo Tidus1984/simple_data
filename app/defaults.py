@@ -9,6 +9,7 @@
 import os,re,configparser,sqlite3
 
 CONFIG_FILE = os.path.join(os.path.abspath(".."),"config.ini")
+DB_KEY = {"STOCK_PATH":"stock.db"}  # 数据库路径写入config.ini
 APP = 'pip3'  # Linux需要有pip3安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
 # 第三方库
@@ -72,6 +73,9 @@ def check_config():
             db_path = os.path.join(father_path,"db")
             print("# 数据库路径",file=code)
             print(f"DB_PATH = {db_path}",file=code)
+            for k in DB_KEY:
+                file_path = os.path.join(db_path,DB_KEY[k])
+                print(f"{k} = {file_path}",file=code)
             print("新建 config.ini 请填写参数")
     # 检测config.ini 参数有无填写
     config = configparser.ConfigParser()
