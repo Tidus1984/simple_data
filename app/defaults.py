@@ -81,7 +81,6 @@ def check_config():
                 print(f"{k} = {file_path}",file=code)
             print("新建 config.ini 请填写参数")
     # 检测config.ini 参数有无填写
-    # print(CONFIG_FILE)
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
     # print(config["common"]['admin_mail_address'],config["common"]['url'],config["common"]['mail_address'],config["common"]['mail_passwd'])

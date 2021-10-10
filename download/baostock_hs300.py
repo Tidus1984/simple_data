@@ -38,13 +38,25 @@ def baostock_hs300_update(sql_table_name = "BAOSTOCK_HS300"):
         # 获取一条记录，将记录合并在一起
         hs300_stocks.append(rs.get_row_data())
     df = pd.DataFrame(hs300_stocks, columns=rs.fields)
-    # 如果没有 BAOSTOCK_HS300 tables
     conn = sqlite3.connect(DB_NAME)
+    data = pd.read_sql(f"SELECT * from {sql_table_name}",conn)
+    # 如果没有 BAOSTOCK_HS300 tables
     if not is_db_table(sql_table_name):
         df.to_sql(sql_table_name, conn, if_exists="replace",index=False)
         print(f"{os.path.basename(__file__)}模块初始化:\n{DB_NAME}数据库-->{sql_table_name}表")
     else:
-        df.to_sql(sql_table_name, conn, if_exists="replace",index=False)
+        a = df["code"].tolist()
+        b = data["code"].tolist()
+        rs = list(set(a).difference(set(b)))  # a中有而b中没有的
+        if rs == []:
+            pass  # 完全一样不用更新
+            # print(f"{os.path.abspath(__file__)}模块不需要更新")
+        else:  # hs300数据表更新
+            if df.shape[0] == 300:
+                df.to_sql(sql_table_name, conn, if_exists="replace",index=False)
+            else:
+                print(df)
+                raise Exception(f"{os.path.abspath(__file__)}模块: baostock下载数据错误")
 
 if __name__ == "__main__":
     baostock_hs300_update()
