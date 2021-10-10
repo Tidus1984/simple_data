@@ -8,7 +8,10 @@
 """
 import os,re,configparser,sqlite3
 
-CONFIG_FILE = os.path.join(os.path.abspath(".."),"config.ini")
+
+DIR_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 上一级目录绝对路径./simple_data
+CONFIG_FILE = os.path.join(DIR_PATH,"config.ini")
+
 DB_KEY = {"STOCK_PATH":"stock.db"}  # 数据库路径写入config.ini
 APP = 'pip3'  # Linux需要有pip3安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
@@ -72,12 +75,13 @@ def check_config():
             father_path=os.path.abspath(os.path.dirname(pwd)+os.path.sep+".")  # 父目录
             db_path = os.path.join(father_path,"db")
             print("# 数据库路径",file=code)
-            print(f"DB_PATH = {db_path}",file=code)
+            print(f"DB_PATH = {DIR_PATH}",file=code)
             for k in DB_KEY:
-                file_path = os.path.join(db_path,DB_KEY[k])
+                file_path = os.path.join(DIR_PATH,"db",DB_KEY[k])
                 print(f"{k} = {file_path}",file=code)
             print("新建 config.ini 请填写参数")
     # 检测config.ini 参数有无填写
+    # print(CONFIG_FILE)
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
     # print(config["common"]['admin_mail_address'],config["common"]['url'],config["common"]['mail_address'],config["common"]['mail_passwd'])
@@ -100,10 +104,10 @@ def check_web():
                 print("{0}: {1}连接发生问题请检测网路".format(web,url))
             # print(f"检查{web} ： {url}")
 
-def creat_sqlite3_db(db_name = "stock.db"):
+def creat_sqlite3_db(path = "STOCK_PATH"):
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
-    db_file = os.path.join(config["common"]['DB_PATH'],db_name)
+    db_file = os.path.join(config["common"][path])
     # print(os.path.abspath(db_file))
     if not os.path.exists(db_file):
         conn = sqlite3.connect(db_file)
@@ -158,3 +162,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
