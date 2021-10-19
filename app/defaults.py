@@ -7,11 +7,12 @@
 
 """
 import os,re,configparser,sqlite3
+from posixpath import dirname
 
 
 DIR_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 上一级目录绝对路径./simple_data
 CONFIG_FILE = os.path.join(DIR_PATH,"config.ini")
-
+DIR_NAME_LIST = ["app","db","download","flask","operat","strategy","tools"]
 DB_KEY = {"STOCK_PATH":"stock.db"}  # 数据库路径写入config.ini
 APP = 'pip3'  # Linux需要有pip3安装
 URL = r'https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/'  #清华镜像网站
@@ -98,10 +99,19 @@ def check_web():
     	  }
     for web in dic.keys():
         for url in dic[web]:
-            r = requests.get(url)
-            if r.status_code !=200:
+            try:
+                r = requests.get(url,timeout=1)
+            except:
                 print("{0}: {1}连接发生问题请检测网路".format(web,url))
-            # print(f"检查{web} ： {url}")
+                # print(f"检查{web} ： {url}")
+
+def check_path():
+    # 检查simple_data初始化目录
+    # print(DIR_PATH)
+    os.chdir(DIR_PATH)  # 切换目录
+    for folder in DIR_NAME_LIST:
+        if not os.path.exists(folder):
+            os.mkdir(folder)
 
 def creat_sqlite3_db(path = "STOCK_PATH"):
     config = configparser.ConfigParser()
@@ -149,17 +159,19 @@ def creat_sqlite3_db(path = "STOCK_PATH"):
 def main():
     # 只能ubuntu20.04系统
 	# 1. pip3 有无安装
-	check_app()
+    check_app()
 	# 2. 第三方库检测没有安装
-	check_Installed(LIBS)
+    check_Installed(LIBS)
 	# 3. config.ini 初始化检测参数有无正确填写
-	check_config()
+    check_config()
 	# 4. 检测网络
-	check_web()
-	# 5. 初始化数据库和表格
-	creat_sqlite3_db()
+    check_web()
+	# 5. 检查simple_data初始化目录
+    check_path()
+    # 6. 初始化数据库和表格
+    creat_sqlite3_db()
+
 
 if __name__ == "__main__":
     main()
-
 
